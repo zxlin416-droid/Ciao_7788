@@ -10,7 +10,8 @@ const ExcelJS = require('exceljs');
 const fs = require('fs');
 const path = require('path');
 
-const [DIR = '報表', TEMPLATE = '執課表範本.xlsx', OUT = '輸出'] = process.argv.slice(2);
+// 預設路徑以程式所在資料夾為基準，不論從哪裡執行都能找到
+const [DIR = path.join(__dirname, '報表'), TEMPLATE = path.join(__dirname, '執課表範本.xlsx'), OUT = path.join(__dirname, '輸出')] = process.argv.slice(2);
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const HEADERS = ['日期', '星期', '課程教練', '分店', '姓名', '課程內容', '收入金額-單價', '成本/支出金額-單價', '備註'];
 
@@ -133,4 +134,8 @@ async function main() {
   console.log(`略過：私人課無費用類型 ${skipped.privEmpty} 列、團體課停課 ${skipped.groupClosed} 列、團體課預約0人 ${skipped.groupZero} 列、資料不全 ${skipped.bad} 列`);
 }
 
-main().catch((e) => { console.error('錯誤：' + e.message); process.exit(1); });
+main().catch((e) => {
+  const hint = e.code === 'EBUSY' || e.code === 'EPERM' ? '（輸出檔可能正用 Excel 開啟，請先關閉再重跑）' : e.code === 'ENOENT' ? '（找不到檔案或資料夾，請確認報表、範本位置）' : '';
+  console.error('錯誤：' + e.message + hint);
+  process.exit(1);
+});
