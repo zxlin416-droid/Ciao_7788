@@ -10,8 +10,9 @@ const ExcelJS = require('exceljs');
 const fs = require('fs');
 const path = require('path');
 
-// 預設路徑以程式所在資料夾為基準，不論從哪裡執行都能找到
-const [DIR = path.join(__dirname, '報表'), TEMPLATE = path.join(__dirname, '執課表範本.xlsx'), OUT = path.join(__dirname, '輸出')] = process.argv.slice(2);
+// 預設路徑以程式所在資料夾為基準（打包成 exe 時為 exe 所在資料夾），不論從哪裡執行都能找到
+const BASE = process.pkg ? path.dirname(process.execPath) : __dirname;
+const [DIR = path.join(BASE, '報表'), TEMPLATE = path.join(BASE, '執課表範本.xlsx'), OUT = path.join(BASE, '輸出')] = process.argv.slice(2);
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const HEADERS = ['日期', '星期', '課程教練', '分店', '姓名', '課程內容', '收入金額-單價', '成本/支出金額-單價', '備註'];
 
